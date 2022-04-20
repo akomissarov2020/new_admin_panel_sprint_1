@@ -28,8 +28,8 @@ CREATE TABLE IF NOT EXISTS content.person (
 
 CREATE TABLE IF NOT EXISTS content.person_film_work (
     id uuid PRIMARY KEY,
-    film_work_id uuid NOT NULL,
     person_id uuid NOT NULL,
+    film_work_id uuid NOT NULL,
     role TEXT NOT NULL,
     created timestamp with time zone
 );
