@@ -11,7 +11,6 @@ from dataclasses import _MISSING_TYPE, dataclass, field, fields
 
 @dataclass
 class BaseImportDataclass(object):
-    
     def __post_init__(self):
         for field in fields(self):
             value = getattr(self, field.name)
@@ -22,8 +21,8 @@ class BaseImportDataclass(object):
         for field in fields(self):
             value_a = getattr(self, field.name)
             value_b = getattr(item, field.name)
-            assert(value_a == value_b)
-  
+            assert value_a == value_b
+
 
 @dataclass
 class Filmwork(BaseImportDataclass):
@@ -33,8 +32,8 @@ class Filmwork(BaseImportDataclass):
     created_at: datetime.datetime
     updated_at: datetime.datetime
     description: str = field(default="")
-    rating:float = field(default=0.0)
-    type:str = field(default="")
+    rating: float = field(default=0.0)
+    type: str = field(default="")
     id: uuid.UUID = field(default_factory=uuid.uuid4)
 
     def get_data(self):
@@ -47,12 +46,23 @@ class Filmwork(BaseImportDataclass):
             self.rating,
             self.type,
             self.created_at,
-            self.updated_at)
+            self.updated_at,
+        )
 
     def get_fields():
-        return 'id', 'title', 'description', 'creation_date', 'file_path', 'rating', 'type', 'created', 'modified'
+        return (
+            "id",
+            "title",
+            "description",
+            "creation_date",
+            "file_path",
+            "rating",
+            "type",
+            "created",
+            "modified",
+        )
 
-    
+
 @dataclass
 class Genre(BaseImportDataclass):
     name: str
@@ -62,15 +72,10 @@ class Genre(BaseImportDataclass):
     id: uuid.UUID = field(default_factory=uuid.uuid4)
 
     def get_data(self):
-        return (
-            self.id,
-            self.name,
-            self.description,
-            self.created_at,
-            self.updated_at)
+        return (self.id, self.name, self.description, self.created_at, self.updated_at)
 
     def get_fields():
-        return 'id', 'name', 'description', 'created', 'modified'
+        return "id", "name", "description", "created", "modified"
 
 
 @dataclass
@@ -81,14 +86,10 @@ class Person(BaseImportDataclass):
     id: uuid.UUID = field(default_factory=uuid.uuid4)
 
     def get_data(self):
-        return (
-            self.id,
-            self.full_name,
-            self.created_at,
-            self.updated_at)
+        return (self.id, self.full_name, self.created_at, self.updated_at)
 
     def get_fields():
-        return 'id', 'full_name', 'created', 'modified'
+        return "id", "full_name", "created", "modified"
 
 
 @dataclass
@@ -104,11 +105,11 @@ class GenreFilmwork(BaseImportDataclass):
             self.film_work_id,
             self.genre_id,
             self.created_at,
-            )
+        )
 
     def get_fields():
-        return 'id', 'film_work_id', 'genre_id', 'created'
-    
+        return "id", "film_work_id", "genre_id", "created"
+
 
 @dataclass
 class PersonFilmwork(BaseImportDataclass):
@@ -125,7 +126,7 @@ class PersonFilmwork(BaseImportDataclass):
             self.person_id,
             self.role,
             self.created_at,
-            )
+        )
 
     def get_fields():
-        return 'id', 'film_work_id', 'person_id', 'role', 'created'
+        return "id", "film_work_id", "person_id", "role", "created"

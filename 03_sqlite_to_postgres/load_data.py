@@ -20,47 +20,52 @@ from psycopg2.sql import SQL, Identifier, Placeholder
 from models import Filmwork, Genre, GenreFilmwork, Person, PersonFilmwork
 
 table2dataclass = {
-    'genre': Genre,
-    'genre_film_work': GenreFilmwork,
-    'person_film_work': PersonFilmwork,
-    'person': Person,
-    'film_work': Filmwork,
+    "genre": Genre,
+    "genre_film_work": GenreFilmwork,
+    "person_film_work": PersonFilmwork,
+    "person": Person,
+    "film_work": Filmwork,
 }
+
 
 @dataclass
 class UploadSettings:
+    """Dataclass for settings."""
     localdb: os.PathLike
     dbname: str
     output_dbname: str
     user: str
     password: str
-    host: str = '127.0.0.1'
+    host: str = "127.0.0.1"
     port: int = 5432
     batch_size: int = 100
-    
+
     def get_psycopg_dict(self) -> dict:
+        """Get subset of settings for psycopg connection."""
         return {
-            'dbname': self.dbname,
-            'user': self.user,
-            'password': self.password,
-            'host': self.host,
-            'port': self.port,
+            "dbname": self.dbname,
+            "user": self.user,
+            "password": self.password,
+            "host": self.host,
+            "port": self.port,
         }
 
 
-def handle_sqlite3_errors(err):
-    print('SQLite error: %s' % (' '.join(err.args)))
+def handle_sqlite3_errors(err: Exception) -> NoReturn:
+    """Handle errors for sqlite3."""
+    print("SQLite error: %s" % (" ".join(err.args)))
     print("Exception class is: ", err.__class__)
-    print('SQLite traceback: ')
+    print("SQLite traceback: ")
     exc_type, exc_value, exc_tb = sys.exc_info()
     print(traceback.format_exception(exc_type, exc_value, exc_tb))
     sys.exit(10)
 
 
-def handle_psycopg2_errors(err):
-    print('psycopg2 error: %s' % (' '.join(err.args)))
+def handle_psycopg2_errors(err: Exception) -> NoReturn:
+    """Handle errors for psycopg2."""
+    print("psycopg2 error: %s" % (" ".join(err.args)))
     print("Exception class is: ", err.__class__)
-    print('psycopg2 traceback: ')
+    print("psycopg2 traceback: ")
     exc_type, exc_value, exc_tb = sys.exc_info()
     print(traceback.format_exception(exc_type, exc_value, exc_tb))
     sys.exit(11)
@@ -68,7 +73,7 @@ def handle_psycopg2_errors(err):
 
 @contextmanager
 def conn_context(dsl: UploadSettings) -> Iterator[Tuple[sqlite3.Row, _connection]]:
-    
+    """Context manager that connect to both databases."""
     try:
         conn = sqlite3.connect(dsl.localdb)
     except sqlite3.Error as err:
@@ -83,18 +88,20 @@ def conn_context(dsl: UploadSettings) -> Iterator[Tuple[sqlite3.Row, _connection
         handle_psycopg2_errors(err)
 
     yield conn, pg_conn
-    
+
     conn.close()
     pg_conn.close()
 
 
-def upload_table(curs: sqlite3.Cursor, 
-                 pg_cur: psycopg2.extras.DictCursor, 
-                 model: dataclass,
-                 table_name: str, 
-                 db_name: str,
-                 n: int) -> NoReturn:
-
+def upload_table(
+        curs: sqlite3.Cursor,
+        pg_cur: psycopg2.extras.DictCursor,
+        model: dataclass,
+        table_name: str,
+        db_name: str,
+        n: int,
+    ) -> NoReturn:
+    """Upload data from sqlite3 to postgres database."""
     try:
         curs.execute(f"SELECT * FROM {table_name};")
     except sqlite3.Error as err:
@@ -102,17 +109,19 @@ def upload_table(curs: sqlite3.Cursor,
 
     batch = []
     fields_ = model.get_fields()
-    col_names = SQL(', ').join(Identifier(name) for name in fields_)
-    place_holders = SQL(', ').join(Placeholder() * len(fields_ ))
-    sql = SQL("INSERT INTO {db_name}.{table_name} ({col_names}) VALUES ({values}) ON CONFLICT DO NOTHING;").format(
-            db_name=Identifier(db_name),
-            table_name=Identifier(table_name),
-            col_names=col_names,
-            values=place_holders,
-            )
+    col_names = SQL(", ").join(Identifier(name) for name in fields_)
+    place_holders = SQL(", ").join(Placeholder() * len(fields_))
+    sql = SQL(
+        "INSERT INTO {db_name}.{table_name} ({col_names}) VALUES ({values}) ON CONFLICT DO NOTHING;"
+    ).format(
+        db_name=Identifier(db_name),
+        table_name=Identifier(table_name),
+        col_names=col_names,
+        values=place_holders,
+    )
     for item in curs.fetchall():
         batch.append(model(**dict(item)).get_data())
-        if len(batch) == n:    
+        if len(batch) == n:
             try:
                 pg_cur.executemany(sql, batch)
             except Exception as err:
@@ -137,7 +146,7 @@ def load_from_sqlite(dsl: UploadSettings) -> NoReturn:
             handle_sqlite3_errors(err)
 
         for item in cur.fetchall():
-            table_name = item['name']
+            table_name = item["name"]
             db_name = dsl.output_dbname
             print(table_name)
             dataclass_ = table2dataclass[table_name]
@@ -148,15 +157,15 @@ def load_from_sqlite(dsl: UploadSettings) -> NoReturn:
             handle_psycopg2_errors(err)
 
 
-if __name__ == '__main__':
-    
+if __name__ == "__main__":
+
     dsl = UploadSettings(
-                    localdb='db.sqlite',
-                    dbname='movies_database',
-                    output_dbname='content',
-                    user='app',
-                    password='123qwe',
-                    batch_size=100,
-                    )
+        localdb="db.sqlite",
+        dbname="movies_database",
+        output_dbname="content",
+        user="app",
+        password="123qwe",
+        batch_size=100,
+    )
 
     load_from_sqlite(dsl)
