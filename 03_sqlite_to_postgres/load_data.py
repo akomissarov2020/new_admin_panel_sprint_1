@@ -4,21 +4,20 @@
 # @author: Aleksey Komissarov
 # @contact: ad3002@gmail.com
 """Loadind data from sqlite3 to postgres."""
-import psycopg2
 import os
 import sqlite3
 import sys
 import traceback
-
 from contextlib import contextmanager
 from dataclasses import dataclass
+from typing import Iterator, NoReturn, Tuple
+
+import psycopg2
 from psycopg2.extensions import connection as _connection
 from psycopg2.extras import DictCursor
-from psycopg2.sql import Identifier, Placeholder, SQL
-from typing import Iterator, Tuple, NoReturn
+from psycopg2.sql import SQL, Identifier, Placeholder
 
-from models import Filmwork, Genre, Person, GenreFilmwork, PersonFilmwork
-
+from models import Filmwork, Genre, GenreFilmwork, Person, PersonFilmwork
 
 table2dataclass = {
     'genre': Genre,

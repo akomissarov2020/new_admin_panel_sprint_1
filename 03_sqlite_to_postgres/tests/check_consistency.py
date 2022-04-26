@@ -5,12 +5,12 @@
 # @contact: ad3002@gmail.com
 """Testing data constituency after import."""
 import datetime
-from dataclasses import dataclass
-
-import psycopg2
 import sqlite3
 import sys
+from dataclasses import dataclass
 from typing import NoReturn
+
+import psycopg2
 
 sys.path.append('..')
 from load_data import UploadSettings, conn_context, table2dataclass

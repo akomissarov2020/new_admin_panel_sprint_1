@@ -6,8 +6,7 @@
 """Dataclasses for loadind data from sqlite3 to postgres."""
 import datetime
 import uuid
-
-from dataclasses import dataclass, field, fields, _MISSING_TYPE
+from dataclasses import _MISSING_TYPE, dataclass, field, fields
 
 
 @dataclass
