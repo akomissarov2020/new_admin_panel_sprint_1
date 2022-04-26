@@ -1,3 +1,9 @@
+# -*- coding: utf-8 -*-
+#
+# @created: 10.04.2022
+# @author: Aleksey Komissarov
+# @contact: ad3002@gmail.com
+"""Loadind data from sqlite3 to postgres."""
 import psycopg2
 import os
 import sqlite3
@@ -13,6 +19,14 @@ from typing import Iterator, Tuple, NoReturn
 
 from models import Filmwork, Genre, Person, GenreFilmwork, PersonFilmwork
 
+
+table2dataclass = {
+    'genre': Genre,
+    'genre_film_work': GenreFilmwork,
+    'person_film_work': PersonFilmwork,
+    'person': Person,
+    'film_work': Filmwork,
+}
 
 @dataclass
 class UploadSettings:
@@ -110,15 +124,6 @@ def upload_table(curs: sqlite3.Cursor,
             pg_cur.executemany(sql, batch)
         except Exception as err:
             handle_psycopg2_errors(err)
-        
-
-table2dataclass = {
-    "genre": Genre,
-    "genre_film_work": GenreFilmwork,
-    "person_film_work": PersonFilmwork,
-    "person": Person, 
-    "film_work": Filmwork,
-}
 
 
 def load_from_sqlite(dsl: UploadSettings) -> NoReturn:

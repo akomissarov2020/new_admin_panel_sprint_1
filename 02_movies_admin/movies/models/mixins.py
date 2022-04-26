@@ -1,3 +1,8 @@
+# -*- coding: utf-8 -*-
+#
+# @created: 10.04.2022
+# @author: Aleksey Komissarov
+# @contact: ad3002@gmail.com
 """Mixin classes."""
 
 import uuid
