@@ -10,91 +10,214 @@ class Migration(migrations.Migration):
 
     initial = True
 
-    dependencies = [
-    ]
+    dependencies = []
 
     operations = [
         migrations.CreateModel(
-            name='Filmwork',
+            name="Filmwork",
             fields=[
-                ('created', models.DateTimeField(auto_now_add=True)),
-                ('modified', models.DateTimeField(auto_now=True)),
-                ('id', models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False)),
-                ('title', models.CharField(max_length=255, verbose_name='title')),
-                ('description', models.TextField(blank=True, null=True, verbose_name='description')),
-                ('creation_date', models.DateField(blank=True, null=True, verbose_name='creation_date')),
-                ('file_path', models.FileField(blank=True, null=True, upload_to='movies/', verbose_name='file')),
-                ('rating', models.FloatField(blank=True, null=True, validators=[django.core.validators.MinValueValidator(0), django.core.validators.MaxValueValidator(10)], verbose_name='rating')),
-                ('film_type', models.CharField(choices=[('movie', 'movie_type'), ('short', 'short'), ('tvSeries', 'tvSeries')], db_column='type', max_length=255, verbose_name='type')),
+                ("created", models.DateTimeField(auto_now_add=True)),
+                ("modified", models.DateTimeField(auto_now=True)),
+                (
+                    "id",
+                    models.UUIDField(
+                        default=uuid.uuid4,
+                        editable=False,
+                        primary_key=True,
+                        serialize=False,
+                    ),
+                ),
+                ("title", models.CharField(max_length=255, verbose_name="title")),
+                (
+                    "description",
+                    models.TextField(blank=True, null=True, verbose_name="description"),
+                ),
+                (
+                    "creation_date",
+                    models.DateField(
+                        blank=True, null=True, verbose_name="creation_date"
+                    ),
+                ),
+                (
+                    "file_path",
+                    models.FileField(
+                        blank=True, null=True, upload_to="movies/", verbose_name="file"
+                    ),
+                ),
+                (
+                    "rating",
+                    models.FloatField(
+                        blank=True,
+                        null=True,
+                        validators=[
+                            django.core.validators.MinValueValidator(0),
+                            django.core.validators.MaxValueValidator(10),
+                        ],
+                        verbose_name="rating",
+                    ),
+                ),
+                (
+                    "film_type",
+                    models.CharField(
+                        choices=[
+                            ("movie", "movie_type"),
+                            ("short", "short"),
+                            ("tvSeries", "tvSeries"),
+                        ],
+                        db_column="type",
+                        max_length=255,
+                        verbose_name="type",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Фильм',
-                'verbose_name_plural': 'Фильмы',
-                'db_table': 'content"."film_work',
+                "verbose_name": "Фильм",
+                "verbose_name_plural": "Фильмы",
+                "db_table": 'content"."film_work',
             },
         ),
         migrations.CreateModel(
-            name='Genre',
+            name="Genre",
             fields=[
-                ('created', models.DateTimeField(auto_now_add=True)),
-                ('modified', models.DateTimeField(auto_now=True)),
-                ('id', models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False)),
-                ('name', models.CharField(max_length=255, verbose_name='name')),
-                ('description', models.TextField(blank=True, null=True, verbose_name='description')),
+                ("created", models.DateTimeField(auto_now_add=True)),
+                ("modified", models.DateTimeField(auto_now=True)),
+                (
+                    "id",
+                    models.UUIDField(
+                        default=uuid.uuid4,
+                        editable=False,
+                        primary_key=True,
+                        serialize=False,
+                    ),
+                ),
+                ("name", models.CharField(max_length=255, verbose_name="name")),
+                (
+                    "description",
+                    models.TextField(blank=True, null=True, verbose_name="description"),
+                ),
             ],
             options={
-                'verbose_name': 'Жанр',
-                'verbose_name_plural': 'Жанры',
-                'db_table': 'content"."genre',
+                "verbose_name": "Жанр",
+                "verbose_name_plural": "Жанры",
+                "db_table": 'content"."genre',
             },
         ),
         migrations.CreateModel(
-            name='Person',
+            name="Person",
             fields=[
-                ('created', models.DateTimeField(auto_now_add=True)),
-                ('modified', models.DateTimeField(auto_now=True)),
-                ('id', models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False)),
-                ('full_name', models.CharField(max_length=255, verbose_name='name')),
+                ("created", models.DateTimeField(auto_now_add=True)),
+                ("modified", models.DateTimeField(auto_now=True)),
+                (
+                    "id",
+                    models.UUIDField(
+                        default=uuid.uuid4,
+                        editable=False,
+                        primary_key=True,
+                        serialize=False,
+                    ),
+                ),
+                ("full_name", models.CharField(max_length=255, verbose_name="name")),
             ],
             options={
-                'verbose_name': 'Персона',
-                'verbose_name_plural': 'Персоны',
-                'db_table': 'content"."person',
+                "verbose_name": "Персона",
+                "verbose_name_plural": "Персоны",
+                "db_table": 'content"."person',
             },
         ),
         migrations.CreateModel(
-            name='PersonFilmwork',
+            name="PersonFilmwork",
             fields=[
-                ('id', models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False)),
-                ('role', models.CharField(choices=[('actor', 'actor'), ('writer', 'writer'), ('director', 'director')], max_length=20, verbose_name='role')),
-                ('created', models.DateTimeField(auto_now_add=True)),
-                ('film_work', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='movies.filmwork', verbose_name='film_work')),
-                ('person', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='movies.person', verbose_name='person')),
+                (
+                    "id",
+                    models.UUIDField(
+                        default=uuid.uuid4,
+                        editable=False,
+                        primary_key=True,
+                        serialize=False,
+                    ),
+                ),
+                (
+                    "role",
+                    models.CharField(
+                        choices=[
+                            ("actor", "actor"),
+                            ("writer", "writer"),
+                            ("director", "director"),
+                        ],
+                        max_length=20,
+                        verbose_name="role",
+                    ),
+                ),
+                ("created", models.DateTimeField(auto_now_add=True)),
+                (
+                    "film_work",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="movies.filmwork",
+                        verbose_name="film_work",
+                    ),
+                ),
+                (
+                    "person",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="movies.person",
+                        verbose_name="person",
+                    ),
+                ),
             ],
             options={
-                'db_table': 'content"."person_film_work',
+                "db_table": 'content"."person_film_work',
             },
         ),
         migrations.CreateModel(
-            name='GenreFilmwork',
+            name="GenreFilmwork",
             fields=[
-                ('id', models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False)),
-                ('created', models.DateTimeField(auto_now_add=True)),
-                ('film_work', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='movies.filmwork', verbose_name='film_work_id')),
-                ('genre', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='movies.genre', verbose_name='genre_id')),
+                (
+                    "id",
+                    models.UUIDField(
+                        default=uuid.uuid4,
+                        editable=False,
+                        primary_key=True,
+                        serialize=False,
+                    ),
+                ),
+                ("created", models.DateTimeField(auto_now_add=True)),
+                (
+                    "film_work",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="movies.filmwork",
+                        verbose_name="film_work_id",
+                    ),
+                ),
+                (
+                    "genre",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="movies.genre",
+                        verbose_name="genre_id",
+                    ),
+                ),
             ],
             options={
-                'db_table': 'content"."genre_film_work',
+                "db_table": 'content"."genre_film_work',
             },
         ),
         migrations.AddField(
-            model_name='filmwork',
-            name='genres',
-            field=models.ManyToManyField(through='movies.GenreFilmwork', to='movies.Genre', verbose_name='genres'),
+            model_name="filmwork",
+            name="genres",
+            field=models.ManyToManyField(
+                through="movies.GenreFilmwork", to="movies.Genre", verbose_name="genres"
+            ),
         ),
         migrations.AddField(
-            model_name='filmwork',
-            name='persons',
-            field=models.ManyToManyField(through='movies.PersonFilmwork', to='movies.Person', verbose_name='persons'),
+            model_name="filmwork",
+            name="persons",
+            field=models.ManyToManyField(
+                through="movies.PersonFilmwork",
+                to="movies.Person",
+                verbose_name="persons",
+            ),
         ),
     ]

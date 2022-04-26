@@ -26,10 +26,10 @@ class UUIDMixin(models.Model):
     """UUIDMixin class."""
 
     id = models.UUIDField(
-             primary_key=True,
-             default=uuid.uuid4,
-             editable=False,
-         )
+        primary_key=True,
+        default=uuid.uuid4,
+        editable=False,
+    )
 
     class Meta(object):
         """Meta class."""

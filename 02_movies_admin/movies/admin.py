@@ -20,7 +20,7 @@ class GenreAdmin(admin.ModelAdmin):
 class PersonAdmin(admin.ModelAdmin):
     """PersonAdmin class."""
 
-    search_fields = ['full_name']
+    search_fields = ["full_name"]
 
 
 class GenreFilmworkInline(admin.TabularInline):
@@ -28,7 +28,7 @@ class GenreFilmworkInline(admin.TabularInline):
 
     model = GenreFilmwork
 
-    verbose_name_plural = _('genres')
+    verbose_name_plural = _("genres")
 
 
 class PersonFilmworkInline(admin.TabularInline):
@@ -36,9 +36,9 @@ class PersonFilmworkInline(admin.TabularInline):
 
     model = PersonFilmwork
 
-    autocomplete_fields = ['person']
+    autocomplete_fields = ["person"]
 
-    verbose_name_plural = _('persons')
+    verbose_name_plural = _("persons")
 
 
 @admin.register(Filmwork)
@@ -47,10 +47,10 @@ class FilmworkAdmin(admin.ModelAdmin):
 
     inlines = (GenreFilmworkInline, PersonFilmworkInline)
 
-    list_display = ('title', 'film_type', 'creation_date', 'rating')
+    list_display = ("title", "film_type", "creation_date", "rating")
 
-    list_filter = ('film_type', 'genres')
+    list_filter = ("film_type", "genres")
 
-    search_fields = ('title', 'description', 'id')
+    search_fields = ("title", "description", "id")
 
-    filter_horizontal = ('persons', 'persons')
+    filter_horizontal = ("persons", "persons")
