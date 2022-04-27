@@ -11,6 +11,7 @@ import sys
 import traceback
 from contextlib import contextmanager
 from dataclasses import dataclass
+from dotenv import load_dotenv
 from typing import Iterator, NoReturn, Tuple
 
 import psycopg2
@@ -20,6 +21,8 @@ from psycopg2.sql import SQL, Identifier, Placeholder
 
 from models import Filmwork, Genre, GenreFilmwork, Person, PersonFilmwork
 
+
+load_dotenv()
 
 logging.basicConfig(
     level=logging.DEBUG,
@@ -42,11 +45,11 @@ table2dataclass = {
 @dataclass
 class UploadSettings:
     """Dataclass for settings."""
-    localdb: os.PathLike
-    dbname: str
-    output_dbname: str
-    user: str
-    password: str
+    localdb: os.PathLike = os.environ.get("DB_SQLITE")
+    dbname: str = os.environ.get("DB_NAME")
+    output_dbname: str = os.environ.get("DB_PREFIX")
+    user: str = os.environ.get("DB_USER")
+    password: str = os.environ.get("DB_PASSWORD")
     host: str = "127.0.0.1"
     port: int = 5432
     batch_size: int = 100
@@ -177,11 +180,6 @@ if __name__ == "__main__":
     logging.info("Starting data export...")
 
     dsl = UploadSettings(
-        localdb="db.sqlite",
-        dbname="movies_database",
-        output_dbname="content",
-        user="app",
-        password="123qwe",
         batch_size=100,
     )
 

@@ -8,6 +8,7 @@ import datetime
 import sqlite3
 import sys
 from dataclasses import dataclass
+from dotenv import load_dotenv
 from typing import NoReturn
 
 import psycopg2
@@ -15,6 +16,8 @@ import psycopg2
 sys.path.append("..")
 from load_data import UploadSettings, conn_context, table2dataclass
 
+
+load_dotenv()
 
 def check_tables(
         curs: sqlite3.Cursor,
@@ -75,12 +78,6 @@ def check_data(dsl: UploadSettings) -> NoReturn:
 
 
 if __name__ == "__main__":
-    dsl = UploadSettings(
-        localdb="../db.sqlite",
-        dbname="movies_database",
-        output_dbname="content",
-        user="app",
-        password="123qwe",
-    )
 
+    dsl = UploadSettings()
     check_data(dsl)
