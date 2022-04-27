@@ -16,6 +16,7 @@ include(
     "components/middleware.py",
     "components/auth.py",
     "components/i18n.py",
+    "components/logging.py",
 )
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -30,7 +31,7 @@ SECRET_KEY = (os.environ.get("SECRET_KEY"),)
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get("DEBUG", False) == "True"
 
-ALLOWED_HOSTS = os.environ.get(ALLOWED_HOSTS).split(",")
+ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS").split(",")
 
 INTERNAL_IPS = [
     "127.0.0.1",

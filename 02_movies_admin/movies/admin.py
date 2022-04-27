@@ -6,6 +6,7 @@
 """Admin settings for movies app."""
 
 from django.contrib import admin
+from django.db.models import Prefetch
 from django.utils.translation import gettext_lazy as _
 
 from .models.models import Filmwork, Genre, GenreFilmwork, Person, PersonFilmwork
@@ -40,10 +41,19 @@ class PersonFilmworkInline(admin.TabularInline):
 
     verbose_name_plural = _("persons")
 
+    list_prefetch_related = (Prefetch('film_work'), Prefetch('person'))
+
+    def get_queryset(self, request):
+        return super().get_queryset(request).prefetch_related(
+            *self.list_prefetch_related
+        ).all()
+
 
 @admin.register(Filmwork)
 class FilmworkAdmin(admin.ModelAdmin):
     """FilmworkAdmin class."""
+
+    list_prefetch_related = (Prefetch('genres'), Prefetch('persons'))
 
     inlines = (GenreFilmworkInline, PersonFilmworkInline)
 
@@ -54,3 +64,8 @@ class FilmworkAdmin(admin.ModelAdmin):
     search_fields = ("title", "description", "id")
 
     filter_horizontal = ("persons", "persons")
+
+    def get_queryset(self, request):
+        return super().get_queryset(request).prefetch_related(
+            *self.list_prefetch_related
+        ).all()
