@@ -27,6 +27,11 @@ class Genre(UUIDMixin, TimeStampedMixin):
         verbose_name = _("Жанр")
         verbose_name_plural = _("Жанры")
 
+        constraints = [
+            models.UniqueConstraint(fields=['name'], 
+                                    name='name_uniq')
+        ]
+
     def __str__(self):
         return self.name
 
@@ -90,6 +95,10 @@ class Filmwork(UUIDMixin, TimeStampedMixin):
         verbose_name = _("Фильм")
         verbose_name_plural = _("Фильмы")
 
+        indexes = [
+            models.Index(fields=["creation_date"]),
+        ]
+
     def __str__(self):
         return self.title
 
@@ -135,3 +144,8 @@ class PersonFilmwork(UUIDMixin):
         """Meta for PersonFilmwork model."""
 
         db_table = 'content"."person_film_work'
+
+        constraints = [
+            models.UniqueConstraint(fields=["film_work", "person", "role"], 
+                                    name="film_work_person_role_uniq")
+        ]
