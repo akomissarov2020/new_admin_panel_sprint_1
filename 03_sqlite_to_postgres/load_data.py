@@ -104,21 +104,33 @@ def conn_context(dsl: UploadSettings) -> Iterator[Tuple[sqlite3.Row, _connection
     pg_conn.close()
 
 
+def iter_sqlite_db(
+    cursor: sqlite3.Cursor, 
+    table_name: str, 
+    batch_size: int
+    ) -> Iterator:
+    """Iterate over sqllite db"""
+    try:
+        cursor.execute(f"SELECT * FROM {table_name};")
+    except sqlite3.Error as err:
+        handle_sqlite3_errors(err)
+    while True:
+        rows = cursor.fetchmany(size=batch_size)
+        if not rows:
+            break
+        yield rows
+
+
 def upload_table(
         curs: sqlite3.Cursor,
         pg_cur: psycopg2.extras.DictCursor,
         model: dataclass,
         table_name: str,
         db_name: str,
-        n: int,
+        batch_size: int,
     ) -> NoReturn:
     """Upload data from sqlite3 to postgres database."""
-    try:
-        curs.execute(f"SELECT * FROM {table_name};")
-    except sqlite3.Error as err:
-        handle_sqlite3_errors(err)
-
-    batch = []
+    
     fields_ = model.get_fields()
     col_names = SQL(", ").join(Identifier(name) for name in fields_)
     place_holders = SQL(", ").join(Placeholder() * len(fields_))
@@ -130,20 +142,12 @@ def upload_table(
         col_names=col_names,
         values=place_holders,
     )
-    for item in curs.fetchall():
-        batch.append(model(**dict(item)).get_data())
-        if len(batch) == n:
-            try:
-                pg_cur.executemany(sql, batch)
-            except Exception as err:
-                handle_psycopg2_errors(err)
-            batch = []
-    if batch:
+
+    for batch in iter_sqlite_db(curs, table_name, batch_size):
         try:
             pg_cur.executemany(sql, batch)
         except Exception as err:
             handle_psycopg2_errors(err)
-
 
 def load_from_sqlite(dsl: UploadSettings) -> NoReturn:
     """Основной метод загрузки данных из SQLite в Postgres"""
