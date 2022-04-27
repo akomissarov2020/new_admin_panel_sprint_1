@@ -4,6 +4,7 @@
 # @author: Aleksey Komissarov
 # @contact: ad3002@gmail.com
 """Loadind data from sqlite3 to postgres."""
+import logging
 import os
 import sqlite3
 import sys
@@ -18,6 +19,16 @@ from psycopg2.extras import DictCursor
 from psycopg2.sql import SQL, Identifier, Placeholder
 
 from models import Filmwork, Genre, GenreFilmwork, Person, PersonFilmwork
+
+
+logging.basicConfig(
+    level=logging.DEBUG,
+    format="%(asctime)s [%(levelname)s] %(message)s",
+    handlers=[
+        logging.StreamHandler(),
+    ]
+)
+
 
 table2dataclass = {
     "genre": Genre,
@@ -53,21 +64,21 @@ class UploadSettings:
 
 def handle_sqlite3_errors(err: Exception) -> NoReturn:
     """Handle errors for sqlite3."""
-    print("SQLite error: %s" % (" ".join(err.args)))
-    print("Exception class is: ", err.__class__)
-    print("SQLite traceback: ")
+    logging.error("SQLite error: %s" % (" ".join(err.args)))
+    logging.error("Exception class is: ", err.__class__)
+    logging.error("SQLite traceback: ")
     exc_type, exc_value, exc_tb = sys.exc_info()
-    print(traceback.format_exception(exc_type, exc_value, exc_tb))
+    logging.error(traceback.format_exception(exc_type, exc_value, exc_tb))
     sys.exit(10)
 
 
 def handle_psycopg2_errors(err: Exception) -> NoReturn:
     """Handle errors for psycopg2."""
-    print("psycopg2 error: %s" % (" ".join(err.args)))
-    print("Exception class is: ", err.__class__)
-    print("psycopg2 traceback: ")
+    logging.error("psycopg2 error: %s" % (" ".join(err.args)))
+    logging.error("Exception class is: ", err.__class__)
+    logging.error("psycopg2 traceback: ")
     exc_type, exc_value, exc_tb = sys.exc_info()
-    print(traceback.format_exception(exc_type, exc_value, exc_tb))
+    logging.error(traceback.format_exception(exc_type, exc_value, exc_tb))
     sys.exit(11)
 
 
@@ -148,7 +159,7 @@ def load_from_sqlite(dsl: UploadSettings) -> NoReturn:
         for item in cur.fetchall():
             table_name = item["name"]
             db_name = dsl.output_dbname
-            print(table_name)
+            logging.info(table_name)
             dataclass_ = table2dataclass[table_name]
             upload_table(cur, pg_cur, dataclass_, table_name, db_name, dsl.batch_size)
         try:
@@ -158,6 +169,8 @@ def load_from_sqlite(dsl: UploadSettings) -> NoReturn:
 
 
 if __name__ == "__main__":
+
+    logging.info("Starting data export...")
 
     dsl = UploadSettings(
         localdb="db.sqlite",

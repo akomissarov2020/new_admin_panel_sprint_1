@@ -70,7 +70,6 @@ def check_data(dsl: UploadSettings) -> NoReturn:
         for item in cur.fetchall():
             table_name = item["name"]
             db_name = "content"
-            print(table_name)
             model = table2dataclass[table_name]
             check_tables(cur, pg_cur, model, table_name, db_name)
 
